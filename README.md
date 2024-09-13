@@ -1,50 +1,135 @@
-# React + TypeScript + Vite
+# React Application with useReducer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This documentation outlines the setup and configuration of a React application using the `useReducer` hook for state management with TypeScript and Tailwind CSS.
 
-Currently, two official plugins are available:
+## 1. Set Up the Project
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. **Create a React App:**
 
-## Expanding the ESLint configuration
+    ```bash
+    npx create-react-app react-reducer-app --template typescript
+    ```
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+2. **Install Tailwind CSS:**
 
-- Configure the top-level `parserOptions` property like this:
+    ```bash
+    npm install -D tailwindcss postcss autoprefixer
+    npx tailwindcss init -p
+    ```
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+    Update `tailwind.config.js` and `src/index.css` as described in the Tailwind CSS documentation.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 2. Set Up Reducer
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+1. **Create a Reducer:**
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+    Create a file called `src/reducers/counterReducer.ts` and add the following code:
+
+    ```typescript
+    type Action =
+      | { type: 'INCREMENT' }
+      | { type: 'DECREMENT' }
+      | { type: 'INCREMENT_BY_AMOUNT'; payload: number };
+
+    interface CounterState {
+      value: number;
+    }
+
+    export const initialState: CounterState = { value: 0 };
+
+    export const counterReducer = (state: CounterState, action: Action): CounterState => {
+      switch (action.type) {
+        case 'INCREMENT':
+          return { value: state.value + 1 };
+        case 'DECREMENT':
+          return { value: state.value - 1 };
+        case 'INCREMENT_BY_AMOUNT':
+          return { value: state.value + action.payload };
+        default:
+          return state;
+      }
+    };
+    ```
+
+## 3. Create React Components
+
+1. **Counter Component:**
+
+    Create a file called `src/components/Counter.tsx` and add the following code:
+
+    ```typescript
+    import React, { useReducer } from 'react';
+    import { counterReducer, initialState } from '../reducers/counterReducer';
+
+    const Counter: React.FC = () => {
+      const [state, dispatch] = useReducer(counterReducer, initialState);
+
+      return (
+        <div className="flex flex-col items-center justify-center">
+          <h1 className="text-3xl text-black font-bold mt-4">{state.value}</h1>
+          <div className="flex gap-4">
+            <button
+              onClick={() => dispatch({ type: 'INCREMENT' })}
+              className="border-slate-400 p-4 rounded-2xl transition-all duration-300 hover:bg-blue-500 hover:text-white"
+            >
+              Increment
+            </button>
+            <button
+              onClick={() => dispatch({ type: 'DECREMENT' })}
+              className="border-slate-400 p-4 rounded-2xl transition-all duration-300 hover:bg-red-500 hover:text-white"
+            >
+              Decrement
+            </button>
+            <button
+              onClick={() => dispatch({ type: 'INCREMENT_BY_AMOUNT', payload: 5 })}
+              className="border-slate-400 p-4 rounded-2xl transition-all duration-300 hover:bg-green-500 hover:text-white"
+            >
+              Increment by 5
+            </button>
+          </div>
+        </div>
+      );
+    };
+
+    export default Counter;
+    ```
+
+## 4. Integrate Components
+
+1. **Update App Component:**
+
+    Modify `src/App.tsx` to include the Counter component:
+
+    ```typescript
+    import React from 'react';
+    import Counter from './components/Counter';
+
+    const App: React.FC = () => {
+      return (
+        <div className="App">
+          <Counter />
+        </div>
+      );
+    };
+
+    export default App;
+    ```
+
+2. **Update Index File:**
+
+    Ensure `src/index.tsx` renders the App component:
+
+    ```typescript
+    import React from 'react';
+    import ReactDOM from 'react-dom/client';
+    import './index.css';
+    import App from './App';
+
+    const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+    root.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    );
+    ```
+
