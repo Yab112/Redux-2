@@ -7,10 +7,10 @@ This documentation outlines the setup and configuration of a React application u
 1. **Create a React App with Vite:**
 
     ```bash
-    npm create vite@latest react-reducer-app --template react-ts
+    npm create vite@latest ./ --template react-ts
     ```
 
-2. **Navigate to the Project Directory:**
+2. **Navigate to the Project Directory(if needed):**
 
     ```bash
     cd react-reducer-app
