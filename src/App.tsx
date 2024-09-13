@@ -1,7 +1,12 @@
-export default function App() {
+import React from 'react';
+import Counter from './components/Counter';
+
+const App: React.FC = () => {
   return (
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
-  )
-}
+    <div className="flex justify-center items-center h-screen">
+      <Counter />
+    </div>
+  );
+};
+
+export default App;
